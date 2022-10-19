@@ -1,0 +1,47 @@
+$--link-color: --link-color;
+$--text-color: --text-color;
+$--page-color: --page-color;
+
+$darkmap: (
+	$--link-color: #61dafb,
+	$--text-color: #ffffff,
+	$--page-color: #282c34,
+);
+
+$lightmap: (
+	$--page-color: #d9d9d9,
+	$--text-color: #131313,
+	$--link-color: #3322dd,
+);
+
+@mixin spread-map($colormap: ()) {
+	@each $key, $value in $colormap {
+		#{$key}: $value;
+	}
+}
+
+@function theme-var($key, $fallback: null, $map: $darkmap) {
+	@if not map-has-key($map, $key) {
+		@error "key: '#{$key}', is not a key in map: #{$map}";
+	}
+	@if ($fallback) {
+		@return var($key, $fallback);
+	} @else {
+		@return var($key);
+	}
+}
+
+.App-header {
+	&.light-theme {
+		@include spread-map($lightmap);
+	}
+	&.dark-theme {
+		@include spread-map($darkmap);
+	}
+}
+
+.App-header,
+.App-header * {
+	transition: background-color 1000ms !important;
+	transition-delay: 0s !important;
+}
