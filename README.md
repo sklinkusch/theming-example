@@ -1,70 +1,118 @@
-# Getting Started with Create React App
+# theming-example
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Define SCSS variables and link them to CSS variables
 
-## Available Scripts
+```scss
+$--link-color: --link-color;
+$--text-color: --text-color;
+$--page-color: --page-color;
+```
 
-In the project directory, you can run:
+## Define theme maps
 
-### `yarn start`
+```scss
+$darkmap: (
+	$--link-color: #61dafb,
+	$--text-color: #ffffff,
+	$--page-color: #282c34,
+);
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+$lightmap: (
+	$--page-color: #d9d9d9,
+	$--text-color: #131313,
+	$--link-color: #3322dd,
+);
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Define a mixin to put the variables
 
-### `yarn test`
+```scss
+@mixin spread-map($colormap: ()) {
+	@each $key, $value in $colormap {
+		#{$key}: $value;
+	}
+}
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Use this mixin to define the CSS variables
 
-### `yarn build`
+```scss
+.App-header {
+	&.light-theme {
+		@include spread-map($lightmap);
+	}
+	&.dark-theme {
+		@include spread-map($darkmap);
+	}
+}
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Make a transition for changing the colors
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```scss
+.App-header,
+.App-header * {
+	transition: background-color 1000ms !important;
+	transition-delay: 0s !important;
+}
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Make a function that can be used in components
 
-### `yarn eject`
+```scss
+@function theme-var($key, $fallback: null, $map: $darkmap) {
+	@if not map-has-key($map, $key) {
+		@error "key: '#{$key}', is not a key in map: #{$map}";
+	}
+	@if ($fallback) {
+		@return var($key, $fallback);
+	} @else {
+		@return var($key);
+	}
+}
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Use this functions in components
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```scss
+@import "./variables";
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+.App {
+	text-align: center;
+}
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+.App-logo {
+	height: 40vmin;
+	pointer-events: none;
+}
 
-## Learn More
+@media (prefers-reduced-motion: no-preference) {
+	.App-logo {
+		animation: App-logo-spin infinite 20s linear;
+	}
+}
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+.App-header {
+	background-color: theme-var($--page-color);
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	font-size: calc(10px + 2vmin);
+	color: theme-var($--text-color);
+}
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+.App-link {
+	color: theme-var($--link-color);
+}
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+@keyframes App-logo-spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+```
