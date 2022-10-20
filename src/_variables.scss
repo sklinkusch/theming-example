@@ -1,17 +1,24 @@
+$white: #ffffff;
+$lightblue: #61dafb;
+$darkblue: #3322dd;
+$lightgrey: #d9d9d9;
+$darkgrey: #282c34;
+$almostblack: #131313;
+
 $--link-color: --link-color;
 $--text-color: --text-color;
 $--page-color: --page-color;
 
 $darkmap: (
-	$--link-color: #61dafb,
-	$--text-color: #ffffff,
-	$--page-color: #282c34,
+	$--link-color: $lightblue,
+	$--text-color: $white,
+	$--page-color: $darkgrey,
 );
 
 $lightmap: (
-	$--page-color: #d9d9d9,
-	$--text-color: #131313,
-	$--link-color: #3322dd,
+	$--page-color: $lightgrey,
+	$--text-color: $almostblack,
+	$--link-color: $darkblue,
 );
 
 @mixin spread-map($colormap: ()) {
